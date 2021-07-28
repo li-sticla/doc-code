@@ -1,7 +1,7 @@
 ---
 hero:
   title: 前端开发文档
-  desc: 本懒狗基于dumi-doc生成
+  desc: 本懒狗基于dumi-doc编写
   image: https://cdn.jsdelivr.net/gh/li-sticla/picBed@master/unnamed%20(2).jpg
   actions:
     - text: 瞧瞧都写了啥？

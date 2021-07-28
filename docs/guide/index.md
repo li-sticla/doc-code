@@ -4,7 +4,7 @@ toc: menu
 order: 1
 nav:
   path: /guide
-  title: 指南
+  title: 项目指南
   order: 1
 ---
 
@@ -14,14 +14,14 @@ nav:
 
 ### 环境准备
 首先得有 [node](https://nodejs.org/zh-cn/)，并确保 node 版本是 10.13 或以上。
-```
-$ node -v
+```shell
+node -v
 v10.13.0
 ```
 ### 项目初始化
 + 项目中所需要的依赖都会在`package.json`文件中展示。
 + 安装依赖需要使用npm命令，可去[npm官方文档](https://www.npmjs.cn/getting-started/installing-node/)使用及学习。
-```
+```shell
 npm install
 ```
 ### 开始开发
