@@ -1,5 +1,5 @@
 ---
-title: 技术选型及相关配置
+title: 技术选型及相关说明
 toc: menu
 order: 2
 ---
@@ -42,13 +42,27 @@ npm install husky lint-staged -D
 
 #### 2.1.3.解决eslint、prettier冲突：
 
-安装[eslint-config-prettier](https://github.com/prettier/eslint-config-prettier#installation)以关闭eslint中与prettier冲突的规则：
+安装[eslint-config-prettier](https://github.com/prettier/eslint-config-prettier#installation)以关闭 eslint 中与 prettier 冲突的规则：
 
 ```shell
 npm install --save-dev eslint-config-prettier
 ```
 
 #### 2.1.4.配置：
+
+激活 Husky 并新建一个 hook：
+
+```sh
+npx husky install
+
+npx husky add .husky/pre-commit
+```
+
+在新生成的 `.husky`文件夹下找到`pre-commit`文件，加入以下命令，以启动 lint-staged：
+
+```sh
+npx lint-staged
+```
 
 配置`package.json`文件：
 
@@ -61,7 +75,7 @@ npm install --save-dev eslint-config-prettier
     ]
   },
   "lint-staged": {
-    "*.{js,css,md,ts,tsx}": "prettier --write" // 提交前强制格式化
+    "*.{js,css,md,ts,tsx}": "prettier --write" // 对于指定后缀的文件提交前强制格式化
   },
 ```
 
@@ -79,7 +93,7 @@ build
 coverage
 ```
 
-### 2.2.git 提交日志规范
+### 2.2.规范 git 提交日志
 
 在多人协作的项目中，如果Git的提交说明精准，在后期协作以及Bug处理时会变得有据可查，项目的开发可以根据规范的提交说明快速生成开发日志，从而方便开发者或用户追踪项目的开发信息和功能特性。
 
@@ -132,7 +146,7 @@ Body 为对 subject 的补充，可以多行。
 
 Footer 主要是一些关联 issue 的操作。
 
-#### 2.2.1.commitlint安装：
+#### 2.2.1.commitlint 安装：
 
 ```shell
 npm install --save-dev @commitlint/config-conventional @commitlint/cli
@@ -140,17 +154,15 @@ npm install --save-dev @commitlint/config-conventional @commitlint/cli
 
 #### 2.2.2.配置：
 
-在根目录执行以下命令作为commitlint的配置：
+在根目录执行以下命令作为 commitlint 的配置：
 
 ```shell
 echo "module.exports = {extends: ['@commitlint/config-conventional']}" > commitlint.config.js
 ```
 
-#### 2.2.3.激活 Husky 的 `commit-msg` hook：
+#### 2.2.3.新建 Husky 的 `commit-msg` hook：
 
 ```shell
-npx husky install
-
 npx husky add .husky/commit-msg
 ```
 
@@ -160,11 +172,11 @@ npx husky add .husky/commit-msg
 npx --no-install commitlint --edit $1
 ```
 
-#### 2.2.4.commitizen及cz-conventional-changelog:
+#### 2.2.4.commitizen 及 cz-conventional-changelog 实现可视化:
 
-commitlint约定了提交的格式，但每次书写都需要记住那些约定，增加记忆负担。所以**使用cz工具让提交commit过程更加可视化**。
+commitlint 约定了提交的格式，但每次书写都需要记住那些约定，增加记忆负担。所以**使用 cz 工具让提交 commit 过程更加可视化**。
 
-commitizen/cz-cli是一个可以实现规范的提交说明的工具，提供选择的提交信息类别，快速生成提交说明。
+commitizen/cz-cli 是一个可以实现规范的提交说明的工具，提供选择的提交信息类别，快速生成提交说明。
 
 安装：
 
@@ -191,20 +203,130 @@ npm i commitizen cz-conventional-changelog -D
 
 以后 git commit 都使用 npm run commit（即git-cz）代替。
 
+## 3.打包构建
 
+## 4.Mock测试
 
-## 打包构建
+### 4.1.Mock：
 
-## Mock测试
+Mock主要是通过正常请求在后端接口进度落后的情况下，还能获取到和后端约定数据结构一样的模拟数据的一门技术，以避免后端接口进度滞后影响我们正常的开发。
 
-## 调试Debug
+本项目采用**Mock Server**方案，依赖本地 node 服务器，服务器提供接口产生相应的mock数据。
 
-## 语言及规范
+考虑后使用组合工具：`node/express/json-server + mockjs/fakejs`
 
-## React相关
+#### 4.1.1.安装 [json-server](https://github.com/typicode/json-server)：
 
-## UI框架及组件
+```sh
+npm install -g json-server
+```
 
-## 性能优化
+#### 4.1.2.启动 json-server：
 
-## 搜索引擎优化（seo）
+`json-server`是可以直接把一个`json`文件托管成一个具备全`RESTful`风格的`API`, 并支持跨域、`jsonp`、路由订制、数据快照保存等功能的 web 服务器。通过以下命令，把`db.json`文件托管成一个 web 服务。
+
+```sh
+json-server --watch db.json
+```
+
+#### 4.1.3.Mockjs 动态生成模拟数据：
+
+例如启动 json-server 的命令：`json-server --watch app.js` 是把一个 js 文件返回的数据托管成 web 服务。
+
+app.js 配合 [mockjs ](http://mockjs.com/)库可以很方便的进行生成模拟数据。
+
+安装：
+
+```sh
+npm install mockjs
+```
+
+使用：
+
+```js
+// 用mockjs模拟生成数据
+var Mock = require('mockjs');
+
+module.exports = () => {
+  // 使用 Mock
+  var data = Mock.mock({
+    'course|227': [
+      {
+        // 属性 id 是一个自增数，起始值为 1，每次增 1
+        'id|+1': 1000,
+        course_name: '@ctitle(5,10)',
+        autor: '@cname',
+        college: '@ctitle(6)',
+        'category_Id|1-6': 1
+      }
+    ],
+    'course_category|6': [
+      {
+        "id|+1": 1,
+        "pid": -1,
+        cName: '@ctitle(4)'
+      }
+    ]
+  });
+  // 返回的data会作为json-server的数据
+  return data;
+};
+```
+
+#### 4.1.4.自定义配置文件：
+
+通过命令行配置路由、数据文件、监控等会让命令变的很长，而且容易敲错，可以把命令写到 npm 的 scripts 中，但是依然配置不方便。
+
+json-server 允许我们把所有的配置放到一个配置文件中，这个配置文件默认为`json-server.json`;
+
+```json
+{
+  "port": 5000,              //自定义端口
+  "watch": true,             //自动监听变化
+  "static": "./public",
+  "read-only": false,        //是否只能使用GET请求
+  "no-cors": false,          //是否支持跨域
+  "no-gzip": false,          //是否支持压缩
+  "routes": "route.json"     //路由配置地址
+}
+```
+
+路由配置文件`route.json`:
+
+```json
+{
+  "/api/*": "/$1"         //   /api/posts => /posts
+}
+```
+
+#### 4.1.5.简化操作：
+
+为方便项目使用，安装到本地：
+
+```sh
+yarn add json-server -D
+```
+
+并在根目录新建文件夹 `__json_server_mock__` 用于放置托管文件。
+
+在`package.json`中加入scripts：
+
+```json
+"scripts": {
+"mock": "json-server --c json-server.json __json_server_mock__/db.json"
+}
+```
+
+至此，使用 npm run mock 即可快速启动 json-server。
+
+## 5.调试Debug
+
+## 6.语言及规范
+
+## 7.React相关
+
+## 8.UI框架及组件
+
+## 9.性能优化
+
+## 10.搜索引擎优化（seo）
