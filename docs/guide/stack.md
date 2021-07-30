@@ -11,7 +11,7 @@ order: 2
 ## 2.工程规范
 为了提高整体开发效率，首先要将一些代码规范考虑在内，需要保持git仓库的代码格式统一。
 
-考虑后使用组合工具：
+综合考虑后使用组合工具：
 1. 规范提交代码（必需）：`eslint + stylelint + prettier + husky + lint-staged`
 2. 规范commit日志（必需）：`commitlint + commitizen + cz-conventional-changelog`
 ### 2.1.规范提交代码
@@ -58,7 +58,7 @@ npx husky install
 npx husky add .husky/pre-commit
 ```
 
-在新生成的 `.husky`文件夹下找到`pre-commit`文件，加入以下命令，以启动 lint-staged：
+在新生成的 `.husky`文件夹下找到`pre-commit`文件，加入以下内容，以启动 lint-staged：
 
 ```sh
 npx lint-staged
@@ -75,11 +75,11 @@ npx lint-staged
     ]
   },
   "lint-staged": {
-    "*.{js,css,md,ts,tsx}": "prettier --write" // 对于指定后缀的文件提交前强制格式化
+    "*.{js,jsx,css,md,ts,tsx}": "prettier --write" // 对于指定后缀的文件提交前强制格式化
   },
 ```
 
-新建默认prettier配置文件让编辑器和其他工具意识到正在使用prettier：
+新建默认 prettier 配置文件让编辑器和其他工具意识到正在使用prettier：
 
 ```shell
 echo {}> .prettierrc.json
@@ -97,7 +97,8 @@ coverage
 
 在多人协作的项目中，如果Git的提交说明精准，在后期协作以及Bug处理时会变得有据可查，项目的开发可以根据规范的提交说明快速生成开发日志，从而方便开发者或用户追踪项目的开发信息和功能特性。
 
-规范的Git提交说明:
+**规范的Git提交说明:**
+
 + 提供更多的历史信息，方便快速浏览
 
 + 可以过滤某些commit，便于筛选代码review
@@ -106,7 +107,7 @@ coverage
 
 + 可以关联issues
 
-Git提交说明结构:
+**Git提交说明结构:**
 
 Git提交说明可分为三个部分：Header、Body和Footer。
 
@@ -277,7 +278,7 @@ module.exports = () => {
 
 通过命令行配置路由、数据文件、监控等会让命令变的很长，而且容易敲错，可以把命令写到 npm 的 scripts 中，但是依然配置不方便。
 
-json-server 允许我们把所有的配置放到一个配置文件中，这个配置文件默认为`json-server.json`;
+为了解决这个问题，json-server 允许我们把所有的配置放到一个配置文件中，这个配置文件默认为`json-server.json`;
 
 ```json
 {
@@ -291,7 +292,7 @@ json-server 允许我们把所有的配置放到一个配置文件中，这个�
 }
 ```
 
-路由配置文件`route.json`:
+路由配置文件`route.json`(简单示例，具体参见[官方文档](https://github.com/typicode/json-server#routes))：
 
 ```json
 {
@@ -304,7 +305,7 @@ json-server 允许我们把所有的配置放到一个配置文件中，这个�
 为方便项目使用，安装到本地：
 
 ```sh
-yarn add json-server -D
+npm i json-server -D
 ```
 
 并在根目录新建文件夹 `__json_server_mock__` 用于放置托管文件。
