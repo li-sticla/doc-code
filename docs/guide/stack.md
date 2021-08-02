@@ -320,6 +320,58 @@ npm i json-server -D
 
 至此，使用 npm run mock 即可快速启动 json-server。
 
+#### 4.1.6.请求代理：
+
+项目中符合 RESTful API 规范的请求可以由 json-server 进行 mock，除此之外的自定义 API 则需要利用中间件自行编写逻辑进行模拟，无疑增加了开发的复杂度。
+
+考虑后使用 [MSW(Mock Service Worker)](https://github.com/mswjs/msw) 以 [Service Worker](https://developer.mozilla.org/zh-CN/docs/Web/API/Service_Worker_API) 为原理实现后端 API 模拟，对网络请求进行代理，经过后端逻辑处理后，以 `localStorage` 为数据库进行增删改查操作。
+
+`Service workers `本质上充当 Web 应用程序、浏览器与网络（可用时）之间的代理服务器。这个 API 旨在创建有效的离线体验，它会拦截网络请求并根据网络是否可用采取来适当的动作、更新来自服务器的的资源。它还提供入口以推送通知和访问后台同步 API。借助于`Service Worker`，可以轻松实现对网络请求的控制，对于不同的网络请求，采取不同的策略。
+
+登录判断请求示例：
+
+```js
+// src/mocks/handlers.js
+import { rest } from 'msw'
+
+export const handlers = [
+  rest.post('/login', (req, res, ctx) => {
+    // Persist user's authentication in the session
+    sessionStorage.setItem('is-authenticated', 'true')
+
+    return res(
+      // Respond with a 200 status code
+      ctx.status(200)
+    )
+  }),
+
+  rest.get('/user', (req, res, ctx) => {
+    // Check if the user is authenticated in this session
+    const isAuthenticated = sessionStorage.getItem('is-authenticated')
+
+    if (!isAuthenticated) {
+      // If not authenticated, respond with a 403 error
+      return res(
+        ctx.status(403),
+        ctx.json({
+          errorMessage: 'Not authorized',
+        })
+      )
+    }
+
+    // If authenticated, return a mocked user details
+    return res(
+      ctx.status(200),
+      ctx.json({
+        username: 'admin',
+      })
+    )
+  }),
+]
+```
+
+具体使用方法见[官方文档](https://mswjs.io/docs/)。
+
 ## 5.调试Debug
 
 ## 6.语言及规范

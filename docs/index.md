@@ -5,7 +5,7 @@ hero:
   desc: 📖本懒狗基于dumi-doc编写
   image: https://cdn.jsdelivr.net/gh/li-sticla/picBed@master/unnamed%20(2).jpg
   actions:
-    - text: 瞧瞧都写了啥？
+    - text: 🙄瞧瞧都写了啥？
       link: /guide
 features:
   - icon: https://gw.alipayobjects.com/zos/bmw-prod/881dc458-f20b-407b-947a-95104b5ec82b/k79dm8ih_w144_h144.png
