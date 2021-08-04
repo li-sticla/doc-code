@@ -376,9 +376,109 @@ export const handlers = [
 
 ## 6.语言及规范
 
+### 6.1.CSS-in-JS:
+
+指组织 CSS 代码的一种方式，而不是一个具体的库实现。实现了CSS-in-JS的库有很多，代表库有 styled-component 和 emotion。
+
+CSS-in-JS 将应用的CSS样式写在 JavaScript 文件里面，而不是独立为一些`.css`，`.scss`或者`less `之类的文件。
+
+CSS-in-JS 可以用模块化的方式组织 CSS， 依托于 JS 的模块化方案。可以在 CSS 中使用一些属于 JS 的诸如模块声明，变量定义，函数调用和条件判断等语言特性来提供灵活的可扩展的样式定义。
+
+安装`emotion`库：
+
+```sh
+npm install --save @emotion/react
+```
+
+
+
+
+
+
+
+
+
 ## 7.React相关
 
-## 8.UI框架及组件
+
+
+
+
+## 8.UI框架及组件库
+
+### 8.1.Ant Design of React:
+
+Ant Design 源自蚂蚁金服体验技术部的后台产品开发，是一套提炼和应用于企业级后台产品的交互语言和视觉体系。
+
+[antd](https://ant.design/docs/react/introduce-cn) 是基于 Ant Design 设计体系的 React UI 组件库，主要用于研发企业级中后台产品，是目前前端界主流组件库之一。
+
+#### 8.1.1.安装:
+
+```sh
+npm install antd --save-dev
+```
+
+#### 8.1.2.高级配置：
+
+使用 create-react-app 创建的应用，无法进行主题配置。
+
+此时我们需要对 create-react-app 的默认配置进行自定义。使用 [CRACO](https://github.com/gsoft-inc/craco)（**C**reate **R**eact **A**pp **C**onfiguration **O**verride）一个对 create-react-app 进行自定义配置的社区解决方案。
+
+通过在应用程序的根目录添加一个` craco.config.js` 文件，可以自定义` eslint、babel、postcss` 配置等。
+
+安装 craco 并修改 `package.json` 里的 `scripts` 属性。
+
+```sh
+yarn add @craco/craco
+```
+
+```json
+/* package.json */
+"scripts": {
+-   "start": "react-scripts start",
+-   "build": "react-scripts build",
+-   "test": "react-scripts test",
++   "start": "craco start",
++   "build": "craco build",
++   "test": "craco test",
+}
+```
+
+按照 [配置主题](https://ant.design/docs/react/customize-theme-cn) 的要求，自定义主题需要用到类似 [less-loader](https://github.com/webpack-contrib/less-loader/) 提供的 less 变量覆盖功能。我们可以引入 [craco-less](https://github.com/DocSpring/craco-less) 来帮助加载 less 样式和修改变量。安装 `craco-less`:
+
+```sh
+ yarn add craco-less
+```
+
+在项目根目录的`index.tsx `中修改样式引用为 less 文件：
+
+```tsx
+import 'antd/dist/antd.less'
+```
+
+然后在项目根目录创建一个 `craco.config.js` 用于修改默认配置。
+
+```js
+const CracoLessPlugin = require('craco-less');
+
+module.exports = {
+  plugins: [
+    {
+      plugin: CracoLessPlugin,
+      options: {
+        lessLoaderOptions: {
+          lessOptions: {
+            modifyVars: { '@primary-color': '#1DA57A' },
+            javascriptEnabled: true,
+          },
+        },
+      },
+    },
+  ],
+};
+```
+
+这里利用了 [less-loader](https://github.com/webpack/less-loader#less-options) 的 `modifyVars` 来进行主题配置，变量和其他配置方式可以参考 [配置主题](https://ant.design/docs/react/customize-theme-cn) 文档。修改后重启 `yarn start`，如果看到一个绿色的按钮就说明配置成功了。
 
 ## 9.性能优化
 
