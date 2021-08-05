@@ -26,8 +26,8 @@ order: 3
 + 能直观的感受当前文件的作用
 + 以小驼峰方式命名
 ```
-│   │   │   ├── login.vue       # 登录页面
-│   │   │   ├── changePhone.vue # 用户中心-修改电话号码页面
+│   │   │   ├── login.tsx       # 登录页面
+│   │   │   ├── changePhone.tsx # 用户中心-修改电话号码页面
 ```
 ### 2.3.组件命名
 + 能直观的感受当前组件的用途
@@ -125,7 +125,7 @@ html, body {font-size: 10px !important;}
 + 避免广告拦截词汇：ad, gg, banner, guagngao
 ### 4.3.属性
 + 顺序
-1. 位置属性(position, top, right, z-index, display, flaot)
+1. 位置属性(position, top, right, z-index, display, float)
 2. 大小(width, height, padding, margin)
 3. 文字(font,line-height, letter-spacing, color)
 4. 背景 (background, border)
@@ -162,7 +162,7 @@ html, body {font-size: 10px !important;}
 + for 循环
 + 函数的参数之间
 + 运算符前后
-+ 函数声明，函数表达式(前不要空格，)后空格
++ 函数声明，函数表达式`(`前不要空格，`)`后空格
 
 ### 5.3.空行
 + 变量声明后
