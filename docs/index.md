@@ -3,7 +3,7 @@ title: 前端项目文档
 hero:
   title: 前端项目文档
   desc: 📖本懒狗基于dumi-doc编写
-  image: https://cdn.jsdelivr.net/gh/li-sticla/picBed@master/unnamed%20(2).jpg
+  image: https://cdn.jsdelivr.net/gh/li-sticla/picBed@latest/unnamed%20(2).jpg
   actions:
     - text: 🙄瞧瞧都写了啥？
       link: /guide
