@@ -387,7 +387,7 @@ CSS-in-JS 可以用模块化的方式组织 CSS， 依托于 JS 的模块化方�
 安装`emotion`库：
 
 ```sh
-npm install --save @emotion/react
+npm install --save @emotion/react @emotion/styled
 ```
 
 
