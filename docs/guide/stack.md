@@ -452,7 +452,7 @@ yarn add @craco/craco
 
 在项目根目录的`index.tsx `中修改样式引用为 less 文件：
 
-```tsx
+```js
 import 'antd/dist/antd.less'
 ```
 
