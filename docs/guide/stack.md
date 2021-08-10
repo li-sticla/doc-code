@@ -374,6 +374,10 @@ export const handlers = [
 
 ## 5.调试Debug
 
+### 
+
+
+
 ## 6.语言及规范
 
 ### 6.1.CSS-in-JS:
@@ -400,7 +404,64 @@ npm install --save @emotion/react @emotion/styled
 
 ## 7.React相关
 
+本项目不同于传统 web 应用，是基于 React 的单页面应用 (SPA)，其中涉及一些 React 相关的技术栈。
 
+### 7.1.React：
+
+[React](http://facebook.github.io/react/) 是一个为数据提供渲染为 HTML 视图的开源 JavaScript 库。React 不是一个框架 —— 它的应用甚至不局限于 Web 开发，它可以与其他库一起使用以渲染到特定环境。例如，[React Native](https://reactnative.dev/) 可用于构建移动应用程序；[React 360](https://facebook.github.io/react-360/) 可用于构建虚拟现实应用程序……
+
+React 的主要目标是最大程度地减少开发人员构建 UI 时发生的错误。它通过使用组件——描述部分用户界面的、自包含的逻辑代码段——来实现此目的。这些组件可以组合在一起以创建完整的 UI，React 将许多渲染工作进行抽象化，使开发者可以专注于 UI 设计。
+
+#### 7.1.1.安装：
+
+全局安装脚手架：
+
+```sh
+npm i -g create-react-app
+```
+
+#### 7.1.2.使用：
+
+使用 create-react-app 脚手架快速创建应用：
+
+```sh
+cd $your_dir
+create-react-app react-demo
+```
+
+
+
+### 7.2.React-Router:
+
+本项目在 React 单页面应用的基础上使用 React-Router 路由库，通过建立组件与路由之间的映射关系实现类似多个页面的效果。
+
+[React Router](https://github.com/ReactTraining/react-router) 是一个基于 [React](http://facebook.github.io/react/) 之上的强大路由库，它可以让你向应用中快速地添加视图和数据流，同时保持页面与 URL 间的同步，是完整的 React 路由解决方案。它拥有简单的 API 与强大的功能例如代码缓冲加载、动态路由匹配、以及建立正确的位置过渡处理。
+
+#### 7.2.1.安装：
+
+根据应⽤运行的环境选择安装 react-router-dom (在浏览器中使⽤)，本项目版本为 v6.0.0-beta.0
+
+```sh
+npm install --save react-router@6 react-router-dom@6
+```
+
+顺便安装history(history是为React Router提供核心功能的包):
+
+```
+npm install history
+```
+
+#### 7.2.2.使用:
+
+**路由配置:**
+
+路由配置是一组指令，用来告诉 router 如何匹配 URL以及匹配后如何执行代码。
+
+示例：
+
+```
+
+```
 
 
 
@@ -481,5 +542,39 @@ module.exports = {
 这里利用了 [less-loader](https://github.com/webpack/less-loader#less-options) 的 `modifyVars` 来进行主题配置，变量和其他配置方式可以参考 [配置主题](https://ant.design/docs/react/customize-theme-cn) 文档。修改后重启 `yarn start`，如果看到一个绿色的按钮就说明配置成功了。
 
 ## 9.性能优化
+
+React 开发性能监测插件。
+
+### 9.1.Why Did You Render：
+
+[Why Did You Render ](https://github.com/welldone-software/why-did-you-render)是一个能够帮助侦测 React 组件重新渲染的库。
+
+#### 9.1.1.安装：
+
+```sh
+npm install @welldone-software/why-did-you-render --save
+```
+
+#### 9.1.2.使用：
+
+在 src 根目录新建`wdyr.js`文件：
+
+```js
+/// <reference types="@welldone-software/why-did-you-render" />
+import React from 'react';
+
+if (process.env.NODE_ENV === 'development') {
+  const whyDidYouRender = require('@welldone-software/why-did-you-render');
+  whyDidYouRender(React, {
+    trackAllPureComponents: true, //跟踪所有组件
+  });
+}
+```
+
+在`index.tsx`文件的第一行引入 ：
+
+```js
+import './wdyr'; // <--- first import
+```
 
 ## 10.搜索引擎优化（seo）
