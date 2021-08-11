@@ -10,7 +10,7 @@ order: 3
 
 允许向一个现有的对象添加新的功能，同时又不改变其结构，动态的给对象添加一些额外的属性或行为。相比于使用继承，装饰器模式更加灵活。从本质上看装饰器模式是一个包装模式（(Wrapper Pattern），它是通过封装其他对象达到设计的目的。
 
-### 1.2.项目使用场景：
+### 1.2.项目中的使用场景：
 
 #### 1.2.1.React 的高阶组件 （HOC）:
 
@@ -28,7 +28,7 @@ order: 3
 
 单例模式定义了一个对象的创建过程，此对象只有一个单独的实例，并提供一个访问它的全局访问点。
 
-### 2.2.项目使用场景:
+### 2.2.项目中的使用场景:
 
 #### 2.2.1.Redux：
 
@@ -49,19 +49,93 @@ order: 3
 
 **控制反转**（Inversion of Control，缩写为 IOC）是面向对象编程中的一种设计原则，用来降低计算机代码之间的耦合度。**是实现依赖倒置原则的一种代码设计思路**。其中最常见的方式叫做依赖注入，还有一种方式叫依赖查找。
 
-### 3.2.项目使用场景：
+### 3.2.项目中的使用场景：
 
-#### 3.2.1.React 的**[组件组合（component composition）](https://zh-hans.reactjs.org/docs/composition-vs-inheritance.html)**：
+#### 3.2.1.React 的[组件组合（component composition）](https://zh-hans.reactjs.org/docs/composition-vs-inheritance.html)：
 
 组件可以通过 JSX 嵌套，将任意组件作为子组件传递给它们。
 
-```
-<FancyBorder> JSX 标签中的所有内容都会作为一个 children prop 传递给 FancyBorder 组件。因为 FancyBorder 将 {props.children} 渲染在一个 <div> 中，被传递的这些子组件最终都会出现在输出结果中。
-少数情况下，你可能需要在一个组件中预留出几个“洞”。这种情况下，我们可以不使用 children，而是自行约定：将所需内容传入 props，并使用相应的 prop。
+**以本项目中的 AuthenticatedApp 组件为例：**
 
+```tsx | pure
+//AuthenticatedApp
+export const AuthenticatedApp = () => {
+  const [projectModalOpen, setProjectModalOpen] = useState(false);
+
+  return (
+    <Container>
+      <PageHeader
+        projectButton={ //容器组件 projectButton
+          <ButtonNoPadding
+            onClick={() => setProjectModalOpen(true)} //将 projectModalOpen 状态设为 true
+            type={"link"}
+          >
+            创建项目
+          </ButtonNoPadding>
+        }
+      />
+     ......    
+    </Container>
+  );
+};
 ```
 
-这种对组件的*控制反转*减少了在应用中要传递的 props 数量，这在很多场景下会使得代码更加干净，使得对根组件有更多的把控。但是，这并不适用于每一个场景：这种行为将逻辑提升到组件树的更高层次来处理，会使得这些高层组件变得更复杂，并且会强行将低层组件适应这样的形式。
+```tsx | pure
+// AuthenticatedApp > PageHeader
+const PageHeader = (props: { projectButton: JSX.Element }) => {
+  return (
+    <Header between={true}>
+      <HeaderLeft gap={true}>
+        <ButtonNoPadding type={"link"} onClick={resetRoute}>
+          <SoftwareLogo width={"18rem"} color={"rgb(38, 132, 255)"} />
+        </ButtonNoPadding>
+        <ProjectPopover {...props} /> // 接收props：projectButton 
+        <span>用户</span>
+      </HeaderLeft>
+      <HeaderRight>
+        <User />
+      </HeaderRight>
+    </Header>
+  );
+};
+```
+
+```tsx | pure
+// PageHeader > ProjectPopover
+export const ProjectPopover = (props: { projectButton: JSX.Element }) => {
+  const { data: projects } = useProjects();
+  const pinnedProjects = projects?.filter((project) => project.pin);
+  const content = (
+    <ContentContainer>
+      <Typography.Text type={"secondary"}>收藏项目</Typography.Text>
+      <List>
+        {pinnedProjects?.map((project) => (
+          <List.Item>
+            <List.Item.Meta title={project.name} />
+          </List.Item>
+        ))}
+      </List>
+      <Divider />
+      {props.projectButton} //在此处渲染 projectButton
+    </ContentContainer>
+  );
+  return (
+    <Popover placement={"bottom"} content={content}>
+      <span>项目</span>
+    </Popover>
+  );
+};
+```
+
+ 在 AuthenticatedApp 中，projectButton 组件中的所有内容都会作为一个 prop 传递给 PageHeader 组件。而PageHeader 组件则将其传递给 ProjectPopover。因为 ProjectPopover 将 `{props.projectButton} `渲染，被传递的子组件 projectButton 最终会出现在输出结果中。
+
+
+
+由于 ProjectPopover 组件需要使用另一个嵌套组件提供的数据，于是 PageHeader 接收了另一个组件 projectButton，并且将其向下层层传递，这使得实际渲染 projectButton 的子组件 ProjectPopover 无需关心 projectButton 组件的实现细节，而控制 projectButton 如何展示的逻辑实际写在AuthenticatedApp 中。
+
+
+
+这种对组件的*控制反转*减少了在应用中要传递的 props 数量，这在很多场景下会使得代码更加干净，使得对根组件有更多的把控。但是，这并不适用于每一个场景：这种行为将逻辑提升到组件树的更高层次来处理，会使得这些高层组件变得更复杂，并且会强行将低层组件适应这样的形式，props drilling 的问题也没有得到解决。
 
 #### 3.2.2.React context：
 

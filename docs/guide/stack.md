@@ -3,11 +3,12 @@ title: 技术选型及相关说明
 toc: menu
 order: 2
 ---
-## 1.CI/CD
+## 1.CI/CD、静态站点托管
 使用 CI / CD 工具可自动完成构建，测试和部署新代码的过程。即使只更改了其中一行甚至是一个字符，团队成员都可以立即获得有关其代码生产准备情况的反馈。如此一来，每位团队成员都可以将他们的代码推送到生产体系当中，而构建，测试和部署的过程则自动完成，以便他们放心大胆地继续处理应用程序的下一部分。
 
 本项目利用腾讯打造的云上开发部署平台 [CloudBase Webify](https://cloud.tencent.com/product/webify)进行快速开发，并基于 Web 应用托管服务的内置 CI/CD 能力，只需要将变更推送至 Git 仓库，便可触发应用的构建和重新部署。
 除此之外，Web 应用托管还为每个应用分配一个专属的支持 HTTPS的默认域名，并提供 CDN 接入能力。
+
 ## 2.工程规范
 为了提高整体开发效率，首先要将一些代码规范考虑在内，需要保持git仓库的代码格式统一。
 
@@ -388,10 +389,42 @@ CSS-in-JS 将应用的CSS样式写在 JavaScript 文件里面，而不是独立�
 
 CSS-in-JS 可以用模块化的方式组织 CSS， 依托于 JS 的模块化方案。可以在 CSS 中使用一些属于 JS 的诸如模块声明，变量定义，函数调用和条件判断等语言特性来提供灵活的可扩展的样式定义。
 
-安装`emotion`库：
+#### 6.1.1.安装 emotion 库：
 
 ```sh
 npm install --save @emotion/react @emotion/styled
+```
+
+#### 6.1.2.结合 styled 使用：
+
+引入 styled，以 `styled.HTMLElement`` `或`styled(Component)`` `格式编写样式：
+
+```js
+import styled from "@emotion/styled";
+
+export const Row = styled.div<{
+  gap?: number | boolean;
+  between?: boolean;
+  marginBottom?: number;
+}>`
+  display: flex;
+  align-items: center;
+  justify-content: ${(props) => (props.between ? "space-between" : undefined)};
+  margin-bottom: ${(props) => props.marginBottom + "rem"};
+  > * {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    margin-right: ${(props) =>
+      typeof props.gap === "number"
+        ? props.gap + "rem"
+        : props.gap
+        ? "2rem"
+        : undefined};
+  }
+`;
+export const ButtonNoPadding = styled(Button)`
+  padding: 0;
+`;
 ```
 
 
@@ -459,9 +492,53 @@ npm install history
 
 示例：
 
+```tsx | pure
+import { Navigate, Route, Routes } from "react-router";
+import { BrowserRouter as Router } from "react-router-dom";
+<Router>
+  <Routes>
+    <Route
+      path={"/projects"}
+      element={
+        <ProjectListScreen
+          projectButton={
+            <ButtonNoPadding
+              onClick={() => setProjectModalOpen(true)}
+              type={"link"}
+            >
+              创建项目
+            </ButtonNoPadding>
+          }
+        />
+      }
+    />
+    <Route path={"/projects/:projectId/*"} element={<ProjectScreen />} />
+    <Navigate to={"/projects"} />
+  </Routes>
+</Router>;
 ```
 
+### 7.3.React-Redux：
+
+本项目开发中期使用 React-Redux 管理部分组件的状态。(后期统一替换为 Context )
+
+**[Redux](https://redux.js.org/) 是一个使用叫做 `action` 的事件来管理和更新应用状态的模式和工具库**。它以集中式Store（centralized store）的方式对整个应用中使用的状态进行集中管理，其规则确保状态只能以可预测的方式更新。
+
+[React-Redux](https://react-redux.js.org/) 是 Redux 的 React 版本，它使得 Redux 能更好地与 React 的特性结合。
+
+#### 7.3.1.安装：
+
+同时安装 [React-Redux](https://react-redux.js.org/) 及 [Redux Toolkit](https://redux-toolkit.js.org/) 工具库让 Redux 的使用更高效：
+
+```sh
+npm install react-redux @reduxjs/toolkit -d
 ```
+
+#### 7.3.2.使用：
+
+
+
+
 
 
 

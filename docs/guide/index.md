@@ -27,4 +27,4 @@ npm install
 ### 开始开发
 执行 `npm start` 即可开始调试组件：
 ### 构建及部署
-执行 `npm run build`即可对站点做构建，构建产物默认会输出到 dist 目录下，我们可以将 dist 目录部署在 now.sh、GitHub Pages 等静态站点托管平台或者某台服务器上。
+执行 `npm run build`即可对站点做构建，构建产物默认会输出到 build 目录下，我们可以将 build 目录部署在 now.sh、GitHub Pages 等静态站点托管平台或者某台服务器上。
