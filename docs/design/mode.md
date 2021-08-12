@@ -30,9 +30,46 @@ order: 3
 
 ### 2.2.项目中的使用场景:
 
-#### 2.2.1.Redux：
+#### 2.2.1.React-Redux：
 
 #### 2.2.2.React context：
+
+React 有 [*context*](https://zh-hans.reactjs.org/docs/context.html) 的概念。每个 React 组件都可以访问 *context* 。它有些类似于 [事件总线](https://github.com/krasimir/EventBus) ，但是为数据而生。可以把它想象成在任意地方都可以访问的单一 *store* 。
+
+**使用 React.createContext 在项目中创建唯一实例：**
+
+```tsx | pure
+/**
+ * 一个上下文对象;
+ * 对外暴露给提供者 Provider(通常在组件树中上层的位置)和消费者(上下文内任何获取数据的组件)；
+ * 在上下文之内的所有子组件都可以访问这个上下文环境之内的数据，并且不用通过props；
+ */
+const AuthContext = React.createContext<
+  | {
+      user: User | null;
+      register: (form: AuthForm) => Promise<void>;
+      login: (form: AuthForm) => Promise<void>;
+      logout: () => Promise<void>;
+    }
+  | undefined
+>(undefined);
+AuthContext.displayName = "AuthContext";
+```
+
+**通过调用 useAuth Hook 即可在此 context 下的任意处访问：**
+
+```tsx | pure
+/**
+ * 获取当前Context 中 Provider 提供的内容
+ */
+export const useAuth = () => {
+  const context = React.useContext(AuthContext);
+  if (!context) {
+    throw new Error("useAuth必须在AuthProvider中使用");
+  }
+  return context;
+};
+```
 
 ## 3.控制反转：
 
@@ -131,35 +168,89 @@ export const ProjectPopover = (props: { projectButton: JSX.Element }) => {
 
 
 
-由于 ProjectPopover 组件需要使用另一个嵌套组件提供的数据，于是 PageHeader 接收了另一个组件 projectButton，并且将其向下层层传递，这使得实际渲染 projectButton 的子组件 ProjectPopover 无需关心 projectButton 组件的实现细节，而控制 projectButton 如何展示的逻辑实际写在AuthenticatedApp 中。
+由于 ProjectPopover 组件需要使用 AuthenticatedApp 组件中的方法 setProjectModalOpen，传统模式下必须通过prop drilling 的方式把 setProjectModalOpen 从源组件传递到深层嵌套组件，在组件需求变化时无疑会增加组件的复杂度，为避免此情况让 PageHeader 以组件组合方式接收了另一个组件 projectButton，并且将其向下传递，这使得实际渲染 projectButton 的子组件 ProjectPopover 无需关心 projectButton 组件的实现细节，而控制 projectButton 如何展示的逻辑实际写在 AuthenticatedApp 中。
 
-
-
-这种对组件的*控制反转*减少了在应用中要传递的 props 数量，这在很多场景下会使得代码更加干净，使得对根组件有更多的把控。但是，这并不适用于每一个场景：这种行为将逻辑提升到组件树的更高层次来处理，会使得这些高层组件变得更复杂，并且会强行将低层组件适应这样的形式，props drilling 的问题也没有得到解决。
+> 这种对组件的*控制反转*减少了在应用中要传递的 props 数量，这在很多场景下会使得代码更加干净，使得对根组件有更多的把控。但是，这并不适用于每一个场景：这种行为将逻辑提升到组件树的更高层次来处理，会使得这些高层组件变得更复杂，并且会强行将低层组件适应这样的形式，props drilling 的问题也没有得到解决。
 
 #### 3.2.2.React context：
 
 React 有 [*context*](https://zh-hans.reactjs.org/docs/context.html) 的概念。每个 React 组件都可以访问 *context* 。它有些类似于 [事件总线](https://github.com/krasimir/EventBus) ，但是为数据而生。可以把它想象成在任意地方都可以访问的单一 *store* 。
 
-`src/context/auth-context.tsx`:
+**用 AuthProvider 封装处理逻辑并暴露给子组件：**
 
-```js
+```tsx | pure
 /**
- * 一个上下文对象;
- * 对外暴露给提供者 Provider(通常在组件树中上层的位置)和消费者(上下文内任何获取数据的组件)；
- * 在上下文之内的所有子组件都可以访问这个上下文环境之内的数据，并且不用通过props；
+ * 提供者，为消费者提供 context 之内的数据
+ * @param 需要渲染的子组件
+ * @returns 一个具有组件接口和数据的父容器
  */
-const AuthContext = React.createContext<
-  | {
-      user: User | null;
-      register: (form: AuthForm) => Promise<void>;
-      login: (form: AuthForm) => Promise<void>;
-      logout: () => Promise<void>;
-    }
-  | undefined
->(undefined);
-AuthContext.displayName = "AuthContext";
+export const AuthProvider = ({ children }: { children: ReactNode }) => {
+  const {
+    data: user,
+    error,
+    isLoading,
+    isIdle,
+    isError,
+    run,
+    setData: setUser,
+  } = useAsync<User | null>();
+
+  //为方便使用，将register,login,logout 方法封装并暴露出去
+  const register = (form: AuthForm) => auth.register(form).then(setUser);
+  const login = (form: AuthForm) => auth.login(form).then(setUser);
+  const logout = () => auth.logout().then(() => setUser(null));
+
+  useMount(() => {
+    run(bootstrapUser());
+  });
+  if (isIdle || isLoading) {
+    return <FullPageLoading />;
+  }
+  if (isError) {
+    return <FullPageErrorFallback error={error} />;
+  }
+  return (
+    <AuthContext.Provider
+      children={children}
+      value={{ user, login, register, logout }}
+    />
+  );
+};
 ```
+
+**将`AuthProvider` 挂载至 ReactDOM：**
+
+`src/context/index.tsx`
+
+```tsx | pure
+export const AppProviders = ({ children }: { children: ReactNode }) => {
+  return (
+    <Provider store={store}>
+      <QueryClientProvider client={new QueryClient()}>
+        <AuthProvider>{children}</AuthProvider>
+      </QueryClientProvider>
+    </Provider>
+  );
+};
+```
+
+`src/index.tsx`
+
+```tsx | pure
+loadServer(() =>
+  ReactDOM.render(
+    <React.StrictMode>
+      <AppProviders>
+        <DevTools />
+        <App />
+      </AppProviders>
+    </React.StrictMode>,
+    document.getElementById("root")
+  )
+);
+```
+
+此后`<App>`组件内的任意组件都可以通过 useAuth 获取 Context 的 状态。
 
 ## 4.观察者模式：
 
