@@ -218,7 +218,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 };
 ```
 
-**将`AuthProvider` 挂载至 ReactDOM：**
+**将`AppProviders` 挂载至 ReactDOM：**
 
 `src/context/index.tsx`
 
@@ -250,7 +250,7 @@ loadServer(() =>
 );
 ```
 
-此后`<App>`组件内的任意组件都可以通过 useAuth 获取 Context 的 状态。
+此后`<App>`组件内的任意组件都可以通过 `useAuth` 获取 *context* 的状态。
 
 ## 4.观察者模式：
 
