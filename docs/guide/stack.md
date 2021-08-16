@@ -3,7 +3,7 @@ title: 技术选型及相关说明
 toc: menu
 order: 2
 ---
-## 1.CI/CD、静态站点托管
+## 1.CI/CD、静态站点托管💻
 使用 CI / CD 工具可自动完成构建，测试和部署新代码的过程。即使只更改了其中一行甚至是一个字符，团队成员都可以立即获得有关其代码生产准备情况的反馈。如此一来，每位团队成员都可以将他们的代码推送到生产体系当中，而构建，测试和部署的过程则自动完成，以便他们放心大胆地继续处理应用程序的下一部分。
 
 ### 1.1.CloudBase Webify:
@@ -15,7 +15,7 @@ order: 2
 
 由于CloudBase Webify 仍处于开发阶段，**边缘路由**功能还未正式上线，无法配置应用的路由逻辑，影响到项目的正常功能，本项目将成品托管于 github-pages。
 
-👀 [项目地址](https://k1sumi.github.io/)
+#### 👀 [项目地址](https://k1sumi.github.io/)
 
 #### 1.2.1.安装 gh-pages：
 
@@ -131,7 +131,7 @@ npm run deploy
 <!-- End Single Page Apps for GitHub Pages -->
 ```
 
-## 2.工程规范
+## 2.工程规范📄
 
 为了提高整体开发效率，首先要将一些代码规范考虑在内，需要保持git仓库的代码格式统一。
 
@@ -328,7 +328,7 @@ npm i commitizen cz-conventional-changelog -D
 
 以后 git commit 都使用 npm run commit（即git-cz）代替。
 
-## 3.打包构建
+## 3.打包构建🧳
 
 本项目使用目前最流行的打包工具 webpack 进行应用打包，经 webpack 打包压缩后的产物即可直接部署到服务器上。
 
@@ -409,7 +409,7 @@ npm run build
 
 现在，在命令行中运行 `npm start`，我们会看到浏览器自动加载页面。如果你更改任何源文件并保存它们，web server 将在编译代码后自动重新加载。
 
-## 4.Mock测试
+## 4.Mock测试🧪
 
 ### 4.1.Mock：
 
@@ -577,13 +577,13 @@ export const handlers = [
 
 具体使用方法见[官方文档](https://mswjs.io/docs/)。
 
-## 5.调试Debug
+## 5.调试Debug🐛
 
 ### 
 
 
 
-## 6.语言及规范
+## 6.语言及规范🌐
 
 ### 6.1.CSS-in-JS:
 
@@ -637,7 +637,7 @@ export const ButtonNoPadding = styled(Button)`
 
 
 
-## 7.React相关
+## 7.React相关⚛️
 
 本项目不同于传统 web 应用，是基于 React 的单页面应用 (SPA)，其中涉及一些 React 相关的技术栈。
 
@@ -881,7 +881,7 @@ function Todos() {
 render(<App />, document.getElementById('root'))
 ```
 
-## 8.UI框架及组件库
+## 8.UI框架及组件库🐜
 
 ### 8.1.Ant Design of React:
 
@@ -959,7 +959,7 @@ module.exports = {
 
 这里利用了 [less-loader](https://github.com/webpack/less-loader#less-options) 的 `modifyVars` 来进行主题配置，变量和其他配置方式可以参考 [配置主题](https://ant.design/docs/react/customize-theme-cn) 文档。修改后重启 `yarn start`，如果看到一个绿色的按钮就说明配置成功了。
 
-## 9.性能优化
+## 9.性能优化⬆️
 
 本项目使用 React 开发性能监测插件。
 
@@ -995,4 +995,5 @@ if (process.env.NODE_ENV === 'development') {
 import './wdyr'; // <--- first import
 ```
 
-## 10.搜索引擎优化（seo）
+## 10.搜索引擎优化🔍
+
