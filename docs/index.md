@@ -23,9 +23,9 @@ features:
 footer: Open-source MIT Licensed | Copyright © 2020<br />Powered by [dumi](https://d.umijs.org)
 ---
 
-## 反馈与共建
-😊请访问[GitHub](https://github.com/li-sticla/)~
 
-## 查看项目源码
+
+## *"Talk is cheap*. *Show me the code"*
 
 🤗请移步[Github repo](https://github.com/li-sticla/my-react-app)~
+
