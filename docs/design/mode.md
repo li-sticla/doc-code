@@ -4,25 +4,7 @@ toc: menu
 order: 3
 ---
 
-## 1.装饰器模式：
-
-### 1.1.介绍：
-
-允许向一个现有的对象添加新的功能，同时又不改变其结构，动态的给对象添加一些额外的属性或行为。相比于使用继承，装饰器模式更加灵活。从本质上看装饰器模式是一个包装模式（(Wrapper Pattern），它是通过封装其他对象达到设计的目的。
-
-### 1.2.项目中的使用场景：
-
-#### 1.2.1.React 的高阶组件 （HOC）:
-
-很长一段时期内，高阶组件都是增强和组合 React 元素的最流行的方式。它们看上去与 [装饰器模式](http://robdodson.me/javascript-design-patterns-decorator/) 十分相似，因为它是对组件的包装与增强。
-
-高阶组件通常是函数，它接收原始组件并返回原始组件的增强/填充版本。
-
-#### 1.2.2.react-redux 中的 connect：
-
-
-
-## 2.单例模式：
+## 1.单例模式：
 
 ### 2.1.介绍：
 
@@ -32,9 +14,40 @@ order: 3
 
 #### 2.2.1.React-Redux：
 
-#### 2.2.2.React context：
+ *redux*状态管理器，实质上就是一个*单例模式*。在一个应用中，数据是唯一的，但可以有不同的 UI 使用这份唯一的数据。
 
-React 有 [*context*](https://zh-hans.reactjs.org/docs/context.html) 的概念。每个 React 组件都可以访问 *context* 。它有些类似于 [事件总线](https://github.com/krasimir/EventBus) ，但是为数据而生。可以把它想象成在任意地方都可以访问的单一 *store* 。
+**创建全局唯一 store：**
+
+```ts | pure
+import { configureStore } from "@reduxjs/toolkit";
+import { projectListSlice } from "screens/projectList/project-list.slice";
+import { authSlice } from "./auth.slice";
+
+export const rootReducer = {
+  //reducer 的切片
+  projectList: projectListSlice.reducer,
+  auth: authSlice.reducer,
+};
+
+/**
+ * 根状态树
+ */
+export const store = configureStore({
+  reducer: rootReducer,
+});
+export type AppDispatch = typeof store.dispatch;
+export type RootState = ReturnType<typeof store.getState>;
+```
+
+**通过 state 全局访问点访问切片状态：**
+
+```ts | pure
+export const selectUser = (state: RootState) => state.auth.user;
+```
+
+#### 2.2.2.context API：
+
+React v16.3.0 新版本发布的正式 Context 功能 API。类似于 redux，是一个在任意地方都可以访问的单一 *store*。
 
 **使用 React.createContext 在项目中创建唯一实例：**
 
@@ -56,7 +69,7 @@ const AuthContext = React.createContext<
 AuthContext.displayName = "AuthContext";
 ```
 
-**通过调用 useAuth Hook 即可在此 context 下的任意处访问：**
+**使用 useAuth hook 作为 context 全局访问点。通过调用 useAuth Hook 即可在此 context 下的任意处访问：**
 
 ```tsx | pure
 /**
@@ -71,9 +84,9 @@ export const useAuth = () => {
 };
 ```
 
-## 3.控制反转：
+## 2.控制反转：
 
-### 3.1.介绍：
+### 2.1.介绍：
 
 **依赖倒置**（Dependency inversion principle，缩写为 DIP）是面向对象六大基本原则之一。它是指一种特定的解耦形式，使得高层次的模块不依赖于低层次的模块的实现细节，依赖关系被颠倒（反转），从而使得低层次模块依赖于高层次模块的需求抽象。
 
@@ -86,9 +99,9 @@ export const useAuth = () => {
 
 **控制反转**（Inversion of Control，缩写为 IOC）是面向对象编程中的一种设计原则，用来降低计算机代码之间的耦合度。**是实现依赖倒置原则的一种代码设计思路**。其中最常见的方式叫做依赖注入，还有一种方式叫依赖查找。
 
-### 3.2.项目中的使用场景：
+### 2.2.项目中的使用场景：
 
-#### 3.2.1.React 的[组件组合（component composition）](https://zh-hans.reactjs.org/docs/composition-vs-inheritance.html)：
+#### 2.2.1.React 的[组件组合（component composition）](https://zh-hans.reactjs.org/docs/composition-vs-inheritance.html)：
 
 组件可以通过 JSX 嵌套，将任意组件作为子组件传递给它们。
 
@@ -166,15 +179,23 @@ export const ProjectPopover = (props: { projectButton: JSX.Element }) => {
 
  在 AuthenticatedApp 中，projectButton 组件中的所有内容都会作为一个 prop 传递给 PageHeader 组件。而PageHeader 组件则将其传递给 ProjectPopover。因为 ProjectPopover 将 `{props.projectButton} `渲染，被传递的子组件 projectButton 最终会出现在输出结果中。
 
-
-
-由于 ProjectPopover 组件需要使用 AuthenticatedApp 组件中的方法 setProjectModalOpen，传统模式下必须通过prop drilling 的方式把 setProjectModalOpen 从源组件传递到深层嵌套组件，在组件需求变化时无疑会增加组件的复杂度，为避免此情况让 PageHeader 以组件组合方式接收了另一个组件 projectButton，并且将其向下传递，这使得实际渲染 projectButton 的子组件 ProjectPopover 无需关心 projectButton 组件的实现细节，而控制 projectButton 如何展示的逻辑实际写在 AuthenticatedApp 中。
+由于 ProjectPopover 组件需要使用 AuthenticatedApp 组件中的方法 setProjectModalOpen，传统模式下必须通过prop drilling 的方式把 setProjectModalOpen 从源组件传递到深层嵌套组件，在组件需求变化同时也会增加组件的复杂度，为避免此情况让 PageHeader 以组件组合方式接收了另一个组件 projectButton，并且将其向下传递，这使得实际渲染 projectButton 的子组件 ProjectPopover 无需关心 projectButton 组件的实现细节，而控制 projectButton 如何展示的逻辑实际写在 AuthenticatedApp 中。
 
 > 这种对组件的*控制反转*减少了在应用中要传递的 props 数量，这在很多场景下会使得代码更加干净，使得对根组件有更多的把控。但是，这并不适用于每一个场景：这种行为将逻辑提升到组件树的更高层次来处理，会使得这些高层组件变得更复杂，并且会强行将低层组件适应这样的形式，props drilling 的问题也没有得到解决。
 
-#### 3.2.2.React context：
+## 3.Context 模式：
+
+### 3.1.介绍：
 
 React 有 [*context*](https://zh-hans.reactjs.org/docs/context.html) 的概念。每个 React 组件都可以访问 *context* 。它有些类似于 [事件总线](https://github.com/krasimir/EventBus) ，但是为数据而生。可以把它想象成在任意地方都可以访问的单一 *store* 。
+
+> React 的 context 是提供者模式的具体实现。
+
+### 3.2.项目中的使用场景：
+
+#### 3.2.1.context API:
+
+React v16.3.0 新版本发布的正式 Context 功能 API。
 
 **用 AuthProvider 封装处理逻辑并暴露给子组件：**
 
@@ -252,9 +273,5 @@ loadServer(() =>
 
 此后`<App>`组件内的任意组件都可以通过 `useAuth` 获取 *context* 的状态。
 
-## 4.观察者模式：
 
-### 4.1.介绍：
-
-在观察者模式中，观察者需要直接订阅目标事件；在目标发出内容改变的事件后，直接接收事件并作出响应。很多库都有该模式的实现，比如vue、redux等。
 
